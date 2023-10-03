@@ -103,6 +103,7 @@ def get_dealer_details(request,id):
         # Get reviews from the URL
         reviews = get_dealer_reviews_from_cf(url, id=id)
         context['review_list'] = reviews
+        context['dealer_id'] = id
         # Return a list of reviews
         return render(request, 'djangoapp/dealer_details.html', context)
 
@@ -110,7 +111,7 @@ def get_dealer_details(request,id):
 def add_review(request, dealer_id):
     context = {}
     dealer_url = ""
-    dealer = get_dealer_by_id_from_cf(dealer_url, id=dealer_id)
+    dealer = get_dealer_by_id_from_cf(dealer_url,dealer_id)
     context["dealer"] = dealer
     if request.method == 'GET':
         # Get cars for the dealer
@@ -143,5 +144,5 @@ def add_review(request, dealer_id):
             new_payload = {}
             new_payload["review"] = payload
             review_post_url = ""
-            post_request(review_post_url, new_payload, id=id)
-    return payload
+            respose = post_request(review_post_url, new_payload, id=id)
+            return render(request, 'djangoapp/dealer_details.html', {respose:respose})

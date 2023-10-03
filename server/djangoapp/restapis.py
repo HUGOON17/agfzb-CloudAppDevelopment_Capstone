@@ -40,8 +40,8 @@ def get_request(url, **kwargs):
 def post_request(url, json_payload, **kwargs):
     print(kwargs)
     print("POST to {} ".format(url))
-    print(payload)
-    response = requests.post(url, params=kwargs, json=payload)
+    print(json_payload)
+    response = requests.post(url, params=kwargs, json=json_payload)
     status_code = response.status_code
     print("With status {} ".format(status_code))
     json_data = json.loads(response.text)
@@ -77,34 +77,34 @@ def get_dealer_reviews_from_cf(url, **kwargs):
     id = kwargs.get("id")
     if id:
         json_result = get_request(url, id=id)
-    # Call get_request with a URL parameter
+    else:
+        json_result = get_request(url)
+    # print(json_result)
     if json_result:
-        # Get the row list in JSON as dealers
-        reviews = json_result['data']['docs']
-        # For each dealer object
-        for review in reviews:
-            # Get its content in `doc` object
-            review_doc = review
-            # Create a CarDealer object with values in `doc` object
-            try:
-                review_obj = DealerReview(dealership=review_doc["dealership"], name=review_doc["name"], purchase=review_doc["purchase"],
-                                   review=review_doc["review"], purchase_date=review_doc["purchase_date"], car_make=review_doc["car_make"],
-                                   car_model=review_doc["car_model"],
-                                   car_year=review_doc["car_year"],id=review_doc["id"],sentiment = "good")
-            except KeyError:
-                print("Something is missing from this review. Using default values.")
-                # Creating a review object with some default values
-                review_obj = DealerReview(dealership=review_doc["dealership"], name=review_doc["name"], purchase=review_doc["purchase"],
-                                   review=review_doc["review"], purchase_date=review_doc["purchase_date"], car_make=review_doc["car_make"],
-                                   car_model=review_doc["car_model"],
-                                   car_year=review_doc["car_year"],id=review_doc["id"],sentiment = "good")
+        print("line 105",json_result)
+        reviews = json_result["data"]["docs"]
+        for dealer_review in reviews:
+            review_obj = DealerReview(dealership=dealer_review["dealership"],
+                                   name=dealer_review["name"],
+                                   purchase=dealer_review["purchase"],
+                                   review=dealer_review["review"])
+            if "id" in dealer_review:
+                review_obj.id = dealer_review["id"]
+            if "purchase_date" in dealer_review:
+                review_obj.purchase_date = dealer_review["purchase_date"]
+            if "car_make" in dealer_review:
+                review_obj.car_make = dealer_review["car_make"]
+            if "car_model" in dealer_review:
+                review_obj.car_model = dealer_review["car_model"]
+            if "car_year" in dealer_review:
+                review_obj.car_year = dealer_review["car_year"]
+            
             sentiment = analyze_review_sentiments(review_obj.review)
             print(sentiment)
-            review_obj.sentiment = sentiment            
+            review_obj.sentiment = sentiment
             results.append(review_obj)
 
     return results
-
 #def get_dealer_by_id_from_cf(url, dealerId):
 # - Call get_request() with specified arguments
 # - Parse JSON results into a DealerView object list

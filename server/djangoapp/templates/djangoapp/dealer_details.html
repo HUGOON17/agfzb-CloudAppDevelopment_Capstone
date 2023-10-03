@@ -18,7 +18,7 @@
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
                 <li>
-                    <a class="btn btn-link" href= "djangoapp/add_review.html">Add Review</a>
+                    <a class="btn btn-link" href="{% url 'djangoapp:add_review' dealer_id %}">Add Review</a>
                     <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
                     <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
                 </li>
@@ -51,10 +51,10 @@
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ review.car_make }} {{ review.car_model }} ({{ review.car_year }})</h5>
-                    <p class="card-text"><strong>Review ID:</strong> {{ review.review_id }}</p>
+                    <p class="card-text"><strong>Review ID:</strong> {{ review.id }}</p>
                     <p class="card-text"><strong>Purchase:</strong> {{ review.purchase }}</p>
                     <p class="card-text"><strong>Purchase Date:</strong> {{ review.purchase_date }}</p>
-                    <p class="card-text"><strong>Dealer ID:</strong> {{ review.dealer_id }}</p>
+                    <p class="card-text"><strong>Dealer ID:</strong> {{ review.dealership }}</p>
                     <p class="card-text"><strong>Review Content:</strong> {{ review.review }}</p>
                     <p class="card-text"><strong>Sentiment:</strong> {{ review.sentiment }}</p>
                 </div>
