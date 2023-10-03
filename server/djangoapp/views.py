@@ -86,35 +86,31 @@ def registration_request(request):
             return render(request, 'djangoapp/registration.html', context)
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
-#    context = {}
-#        return render(request, 'djangoapp/index.html', context)
+    context = {}
     if request.method == "GET":
         url = "https://us-south.functions.appdomain.cloud/api/v1/web/2377095f-e7cf-473d-bc75-8e2129d531f6/dealership-package/get-dealership"
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
-        # Concat all dealer's short name
-        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        context['dealership_list'] = dealerships
         # Return a list of dealer short name
-        return HttpResponse(dealer_names)
+        return render(request, 'djangoapp/index.html', context)
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 def get_dealer_details(request,id):
-#    context = {}
-#        return render(request, 'djangoapp/index.html', context)
+    context = {}
     if request.method == "GET":
         url = "https://us-south.functions.appdomain.cloud/api/v1/web/2377095f-e7cf-473d-bc75-8e2129d531f6/dealership-package/get-reviews"
         # Get reviews from the URL
         reviews = get_dealer_reviews_from_cf(url, id=id)
-        # Concat all reviews 
-        reviews_list = ' '.join([review.review + ' ' + review.sentiment for review in reviews])
+        context['review_list'] = reviews
         # Return a list of reviews
-        return HttpResponse(reviews_list)
+        return render(request, 'djangoapp/dealer_details.html', context)
 
 # Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
     context = {}
     dealer_url = ""
-    dealer = get_dealer_by_id_from_cf(dealer_url, id=id)
+    dealer = get_dealer_by_id_from_cf(dealer_url, id=dealer_id)
     context["dealer"] = dealer
     if request.method == 'GET':
         # Get cars for the dealer
